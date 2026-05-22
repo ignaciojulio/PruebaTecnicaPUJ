@@ -1,0 +1,39 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Caimiento de diagnósticos y runtime (Node)
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Directorio de dependencias (¡Crucial no subirlo!)
+node_modules/
+jspm_packages/
+
+# Cobertura de pruebas (Jest / Supertest)
+coverage/
+*.lcov
+
+# Cachés de herramientas de compilación o linters
+.eslintcache
+.node_repl_history
+
+# Variables de entorno y secretos (¡Súper crítico para Render!)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+
+# Configuración específica de editores y OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
