@@ -1,0 +1,71 @@
+{
+	"info": {
+		"_postman_id": "c1a2b3d4-e5f6-4a7b-8c9d-0e1f2g3h4i5j",
+		"name": "API Biblioteca PUJ",
+		"description": "Colección de pruebas para la API de gestión de préstamos.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Consultar Disponibilidad",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://pruebatecnicapuj.onrender.com/api/books/978-01/availability",
+					"protocol": "https",
+					"host": ["pruebatecnicapuj", "onrender", "com"],
+					"path": ["api", "books", "978-01", "availability"]
+				}
+			}
+		},
+		{
+			"name": "Registrar Préstamo",
+			"request": {
+				"method": "POST",
+				"header": [
+					{ "key": "Content-Type", "value": "application/json" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"book_isbn\": \"978-01\",\n    \"user_id\": \"100123456\",\n    \"loan_date\": \"2026-05-22\",\n    \"due_date\": \"2026-06-05\"\n}"
+				},
+				"url": {
+					"raw": "https://pruebatecnicapuj.onrender.com/api/loans",
+					"protocol": "https",
+					"host": ["pruebatecnicapuj", "onrender", "com"],
+					"path": ["api", "loans"]
+				}
+			}
+		},
+		{
+			"name": "Registrar Devolución",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "https://pruebatecnicapuj.onrender.com/api/loans/:id/return",
+					"protocol": "https",
+					"host": ["pruebatecnicapuj", "onrender", "com"],
+					"path": ["api", "loans", ":id", "return"],
+					"variable": [
+						{ "key": "id", "value": "REEMPLAZAR_POR_ID_DE_PRESTAMO" }
+					]
+				}
+			}
+		},
+		{
+			"name": "Listar Préstamos Vencidos",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://pruebatecnicapuj.onrender.com/api/loans/overdue",
+					"protocol": "https",
+					"host": ["pruebatecnicapuj", "onrender", "com"],
+					"path": ["api", "loans", "overdue"]
+				}
+			}
+		}
+	]
+}

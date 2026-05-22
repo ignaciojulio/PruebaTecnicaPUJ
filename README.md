@@ -57,17 +57,35 @@ npm install
 
 ### 2. Configuración de Variables de Entorno
 
-Cree un archivo `.env` en la raíz del proyecto basándose en el siguiente esquema:
+Cree un archivo `.env` en la raíz del proyecto. Use `.env.example` como referencia:
+
+```bash
+cp .env.example .env
+```
+
+Luego, edite el archivo `.env` con tus credenciales locales:
+
+**Para Desarrollo Local (PostgreSQL en tu máquina):**
 
 ```env
 PORT=3000
-DB_NAME=biblioteca_puj
-DB_USER=tu_usuario
-DB_PASSWORD=tu_password
-DB_HOST=localhost
-DB_PORT=5432
 NODE_ENV=development
+DB_NAME=biblioteca_db
+DB_USER=postgres
+DB_PASSWORD=admin
+DB_HOST=127.0.0.1
+DB_PORT=5432
 ```
+
+**Para Producción (Render o similar):**
+
+```env
+PORT=3000
+NODE_ENV=production
+DATABASE_URL=postgresql://usuario:password@host:puerto/nombre_bd
+```
+
+⚠️ **NOTA DE SEGURIDAD**: Nunca subas tus archivos `.env` reales a repositorios públicos. El archivo `.env` está incluido en `.gitignore` para tu protección.
 
 ### 3. Ejecución del Sistema
 
@@ -99,12 +117,23 @@ URL Base: https://api-biblioteca.render.com
 - ✅ Evaluación inmediata de funcionalidades
 - ✅ Datos persistentes y estables
 
-### Opción B: Montaje Local (Auditoría de Código)
+### Opción B: Auditoría Local
 
-Al ejecutar `npm run dev` en tu máquina local, el sistema se precarga automáticamente mediante el script de seeding integrado. Esta opción es ideal para auditorías de código, inspección de arquitectura y debugging:
+Al clonar el repositorio, instalar dependencias y ejecutar `npm run dev`, el sistema se precarga automáticamente con datos de prueba. Esta opción es ideal para auditorías de código, inspección de arquitectura y debugging:
 
 ```bash
+# 1. Clonar el repositorio
+git clone <URL_DEL_REPOSITORIO>
+cd prueba-tecnica-puj
+
+# 2. Instalar dependencias
 npm install
+
+# 3. Configurar variables de entorno
+cp .env.example .env
+# Edita .env con tus credenciales de BD local
+
+# 4. Ejecutar en desarrollo
 npm run dev
 ```
 
@@ -123,14 +152,32 @@ npm run dev
 3. Si está vacía, carga 3 libros de prueba automáticamente
 4. API lista para recibir solicitudes sin pasos adicionales
 
+**Nota: Nunca subas tus archivos .env reales a repositorios públicos.**
+
 ---
 
 ### 4. Pruebas Automatizadas
 
 ```bash
-# Ejecutar la suite de tests con Jest
+# Ejecutar la suite completa de tests
 npm test
+
+# Ejecutar solo los tests de system (auditoría QA completa)
+npx jest src/tests/system.test.js
+
+# Ejecutar con cobertura detallada
+npx jest --coverage src/tests/system.test.js
+
+# Ejecutar un escenario específico
+npx jest -t "ESCENARIO 1"
 ```
+
+**📋 Auditoría QA Disponible:** Consulta [QA_AUDIT_REPORT.md](./QA_AUDIT_REPORT.md) para ver la auditoría completa que cubre:
+
+- ✅ 5 escenarios principales
+- ✅ 30+ casos de prueba automatizados
+- ✅ Validación de integridad transaccional
+- ✅ Checklist de conformidad 100%
 
 ---
 
@@ -148,6 +195,6 @@ Para el desarrollo de este sistema se integró **Gemini Code Assist** dentro del
 
 El desarrollo de este sistema se realizó bajo un esquema de entrega acelerada (Time-Boxed de 2 horas), lo que implicó priorizar la robustez de la lógica de negocio y la integridad de los datos sobre funcionalidades accesorias.
 
-* **Priorización de Funcionalidad:** Se enfocó el esfuerzo en garantizar el ciclo completo de préstamo y devolución con validaciones de stock transaccionales, cumpliendo con los requerimientos funcionales críticos.
-* **Arquitectura Orientada a Mantenibilidad:** La estructura en capas (Controller-Service-Repository) permite que el sistema sea fácilmente escalable. La adición de futuras funcionalidades como Autenticación (JWT), Migraciones de Base de Datos o Documentación (Swagger) puede realizarse de forma modular sin necesidad de refactorizar la lógica central.
-* **Despliegue y Portabilidad:** Se ha priorizado una configuración de entorno sencilla para permitir tanto la evaluación inmediata en producción como la auditoría local del código fuente.
+- **Priorización de Funcionalidad:** Se enfocó el esfuerzo en garantizar el ciclo completo de préstamo y devolución con validaciones de stock transaccionales, cumpliendo con los requerimientos funcionales críticos.
+- **Arquitectura Orientada a Mantenibilidad:** La estructura en capas (Controller-Service-Repository) permite que el sistema sea fácilmente escalable. La adición de futuras funcionalidades como Autenticación (JWT), Migraciones de Base de Datos o Documentación (Swagger) puede realizarse de forma modular sin necesidad de refactorizar la lógica central.
+- **Despliegue y Portabilidad:** Se ha priorizado una configuración de entorno sencilla para permitir tanto la evaluación inmediata en producción como la auditoría local del código fuente.

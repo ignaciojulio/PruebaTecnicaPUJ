@@ -36,7 +36,7 @@ async function seedDatabase() {
                 }
             ]);
 
-            console.log('✅ Precarga completada: 3 libros insertados en la base de datos.');
+            console.log('--- Base de datos precargada con datos de prueba ---');
         } else {
             console.log(`ℹ️  Tabla 'books' contiene ${bookCount} registros. Precarga omitida.`);
         }
