@@ -26,7 +26,7 @@ const sequelize = process.env.DATABASE_URL
             host: process.env.DB_HOST,
             port: process.env.DB_PORT,
             dialect: 'postgres',
-            logging: (msg) => console.log(`[Sequelize]: ${msg}`),
+            logging: process.env.NODE_ENV === 'development' ? (msg) => console.log(`[Sequelize]: ${msg}`) : false,
         }
     );
 
