@@ -1,71 +1,370 @@
 {
 	"info": {
-		"_postman_id": "c1a2b3d4-e5f6-4a7b-8c9d-0e1f2g3h4i5j",
+		"_postman_id": "c1a2b3d4-e5f6-4a7b-8c9d-0e1f2g3h4i5a",
 		"name": "API Biblioteca PUJ",
-		"description": "Colección de pruebas para la API de gestión de préstamos.",
+		"description": "Colección robusta para la gestión de préstamos. Incluye Happy Paths, Edge Cases y Manejo de Errores.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Consultar Disponibilidad",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://pruebatecnicapuj.onrender.com/api/books/978-01/availability",
-					"protocol": "https",
-					"host": ["pruebatecnicapuj", "onrender", "com"],
-					"path": ["api", "books", "978-01", "availability"]
+			"name": "Mantenimiento",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					}
 				}
-			}
+			]
 		},
 		{
-			"name": "Registrar Préstamo",
-			"request": {
-				"method": "POST",
-				"header": [
-					{ "key": "Content-Type", "value": "application/json" }
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"book_isbn\": \"978-01\",\n    \"user_id\": \"100123456\",\n    \"loan_date\": \"2026-05-22\",\n    \"due_date\": \"2026-06-05\"\n}"
+			"name": "Disponibilidad de Libros",
+			"item": [
+				{
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Estructura de disponibilidad correcta\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('available');",
+									"    pm.expect(jsonData.data).to.have.property('copies');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"name": "Éxito - Libro Disponible",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/books/978-0-13-468599-1/availability",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"books",
+								"978-0-13-468599-1",
+								"availability"
+							]
+						}
+					}
 				},
-				"url": {
-					"raw": "https://pruebatecnicapuj.onrender.com/api/loans",
-					"protocol": "https",
-					"host": ["pruebatecnicapuj", "onrender", "com"],
-					"path": ["api", "loans"]
+				{
+					"name": "Edge Case - Sin Copias Disponibles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/books/978-0-201-63361-0/availability",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"books",
+								"978-0-201-63361-0",
+								"availability"
+							]
+						}
+					}
+				},
+				{
+					"name": "Error - ISBN Inexistente",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/books/000-00-00000/availability",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"books",
+								"000-00-00000",
+								"availability"
+							]
+						}
+					}
 				}
-			}
+			]
 		},
 		{
-			"name": "Registrar Devolución",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"url": {
-					"raw": "https://pruebatecnicapuj.onrender.com/api/loans/:id/return",
-					"protocol": "https",
-					"host": ["pruebatecnicapuj", "onrender", "com"],
-					"path": ["api", "loans", ":id", "return"],
-					"variable": [
-						{ "key": "id", "value": "REEMPLAZAR_POR_ID_DE_PRESTAMO" }
+			"name": "Gestión de Préstamos",
+			"item": [
+				{
+					"name": "Creación",
+					"item": [
+						{
+							"name": "Éxito - Crear Préstamo",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"if (jsonData.status === 'success') {",
+											"    pm.test(\"ID de préstamo generado\", function () {",
+											"        pm.expect(jsonData.data.id).to.be.a('string');",
+											"    });",
+											"    pm.collectionVariables.set(\"last_loan_id\", jsonData.data.id);",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"book_isbn\": \"978-0-13-468599-1\",\n    \"user_id\": \"EST-100123\",\n    \"loan_date\": \"{{$isoTimestamp}}\",\n    \"due_date\": \"2026-06-05\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/loans",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"loans"
+									]
+								}
+							}
+						},
+						{
+							"name": "Error - Libro sin Stock",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"book_isbn\": \"978-0-201-63361-0\",\n    \"user_id\": \"EST-999\",\n    \"loan_date\": \"{{$isoTimestamp}}\",\n    \"due_date\": \"2026-06-05\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/loans",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"loans"
+									]
+								}
+							}
+						},
+						{
+							"name": "Error - Datos Incompletos",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"book_isbn\": \"978-0-13-468599-1\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/loans",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"loans"
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Devoluciones",
+					"item": [
+						{
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Mensaje de devolución exitosa\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.message).to.contain(\"Devolución procesada\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"name": "Éxito - Procesar Devolución",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/loans/{{last_loan_id}}/return",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"loans",
+										"{{last_loan_id}}",
+										"return"
+									]
+								}
+							}
+						},
+						{
+							"name": "Error - Ya Devuelto",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/loans/{{last_loan_id}}/return",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"loans",
+										"{{last_loan_id}}",
+										"return"
+									]
+								}
+							}
+						},
+						{
+							"name": "Error - Préstamo No Existe",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/loans/00000000-0000-0000-0000-000000000000/return",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"loans",
+										"00000000-0000-0000-0000-000000000000",
+										"return"
+									]
+								}
+							}
+						}
 					]
 				}
+			]
+		},
+		{
+			"name": "Reportes y Auditoría",
+			"item": [
+				{
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Formato de reporte correcto\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.results).to.be.a('number');",
+									"    pm.expect(jsonData.data).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"name": "Listar Préstamos Vencidos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/loans/overdue",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"loans",
+								"overdue"
+							]
+						}
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
 			}
 		},
 		{
-			"name": "Listar Préstamos Vencidos",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://pruebatecnicapuj.onrender.com/api/loans/overdue",
-					"protocol": "https",
-					"host": ["pruebatecnicapuj", "onrender", "com"],
-					"path": ["api", "loans", "overdue"]
-				}
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.test(\"Status code es 2xx o 4xx esperado\", function () {",
+					"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 400, 404]);",
+					"});",
+					"",
+					"pm.test(\"Respuesta es JSON\", function () {",
+					"    pm.response.to.be.withBody;",
+					"    pm.response.to.be.json;",
+					"});",
+					"",
+					"pm.test(\"Tiempo de respuesta aceptable\", function () {",
+					"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+					"});"
+				]
 			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://pruebatecnicapuj.onrender.com",
+			"type": "string"
+		},
+		{
+			"key": "last_loan_id",
+			"value": "",
+			"type": "string"
 		}
 	]
 }
